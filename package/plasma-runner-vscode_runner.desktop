@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=VSCode
+Comment=Easily access VSCode recent workspaces
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+Icon=com.visualstudio.code
+X-KDE-PluginInfo-Author=Kristen McWilliam
+X-KDE-PluginInfo-Email=kmcwilliampublic@gmail.com
+X-KDE-PluginInfo-Name=vscode_runner
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-API=DBus
+X-Plasma-DBusRunner-Service=codes.merritt.vscode_runner
+X-Plasma-DBusRunner-Path=/vscode_runner
