@@ -9,6 +9,9 @@ A KRunner plugin / "runner" that lists VSCode's recent workspaces
 https://user-images.githubusercontent.com/9575627/143503598-47a7ca08-644d-4ba8-9f33-3baf8143fcbf.mp4
 
 
+<br>
+
+
 ## Building
 
 ```bash
@@ -20,11 +23,17 @@ dart compile exe -o package/vscode_runner bin/vscode_runner.dart
 ```
 
 
+<br>
+
+
 ## Install plugin
 
 ```bash
 package/install.sh
 ```
+
+
+<br>
 
 
 ## Uninstall plugin
