@@ -6,6 +6,15 @@ A KRunner plugin / "runner" that lists VSCode's recent workspaces
 ... get from store.kde.org ...
 
 
+<br>
+
+
+![Screenshot](assets/screenshots/screenshot.png)
+
+
+<br>
+
+
 https://user-images.githubusercontent.com/9575627/143503598-47a7ca08-644d-4ba8-9f33-3baf8143fcbf.mp4
 
 
