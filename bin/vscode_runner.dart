@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:krunner/krunner.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:vscode_runner/storage.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
@@ -39,20 +40,32 @@ Future<void> checkIfAlreadyRunning() async {
   }
 }
 
-Future<List<String>> fetchPaths() async {
-  final storageFile = File('${configHome.path}/Code/storage.json');
-  final exists = await storageFile.exists();
-  if (!exists) {
-    print('VSCode Runner: could not find storage.json.');
+/// Load VSCode's globalStorage database and retrieve recent paths.
+List<String> fetchPaths() {
+  final dbFile = '${configHome.path}/Code/User/globalStorage/state.vscdb';
+  final Database db;
+
+  try {
+    db = sqlite3.open(dbFile, mode: OpenMode.readOnly);
+  } catch (e) {
+    print('Unable to open VSCode database file.\n'
+        '$e');
     return const [];
   }
-  final storageJson = await storageFile.readAsString();
-  final recentPaths = Storage.fromJson(storageJson).recentPaths;
+
+  final rows = db.select(
+    "SELECT value FROM ItemTable WHERE key = 'history.recentlyOpenedPathsList'",
+  );
+  db.dispose();
+
+  final jsonString = rows.first.values.first as String;
+  final recentPaths = Storage.fromJson(jsonString).recentPaths;
+
   return recentPaths;
 }
 
 Future<List<QueryMatch>> matchQuery(String query) async {
-  final recentWorkspacePaths = await fetchPaths();
+  final recentWorkspacePaths = fetchPaths();
   recentWorkspacePaths.removeWhere((element) => !element.contains(query));
 
   final matches = recentWorkspacePaths.map((path) {
