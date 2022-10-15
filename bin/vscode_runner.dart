@@ -73,7 +73,7 @@ Future<List<QueryMatch>> matchQuery(String query) async {
     final relativePath = parseRelativePath(uri);
     final projectName = path.split('/').last;
     return QueryMatch(
-      id: uri.path,
+      id: path,  // id is the raw folderUri starting with file:// or vscode-remote://
       title: projectName,
       icon: 'com.visualstudio.code',
       rating: QueryMatchRating.exact,
@@ -86,8 +86,8 @@ Future<List<QueryMatch>> matchQuery(String query) async {
 }
 
 Uri pathToUri(String path) {
-  // Remove the leading "file://" and add a directory indicator at the end.
-  final trimmed = path.substring(7) + '/';
+  // Remove the leading "file://" or "vscode-remote://"
+  final trimmed = path.replaceFirst('file://', '').replaceFirst('vscode-remote://', '');
   final uri = Uri.directory(trimmed);
   return uri;
 }
@@ -133,7 +133,9 @@ Future<void> runAction({
 }
 
 Future<void> openWorkspace(String path) async {
-  await Process.run('code', [path]);
+  // just pass the raw path as --folder-uri, VSCode will handle it
+  // see https://stackoverflow.com/questions/60144074/how-to-open-a-remote-folder-from-command-line-in-vs-code
+  await Process.run('code', ['--folder-uri=' + path]);
 }
 
 Future<void> openContainingFolder(String path) async {
