@@ -119,16 +119,31 @@ Future<List<SecondaryAction>> retrieveActions() async {
   ];
 }
 
+String dbusToString(String dbusStr) {
+  // Remove the `DBusString('')`
+  String str;
+  if (dbusStr.startsWith("DBusString")) {
+    str = dbusStr.substring(12);
+    str = str.substring(0, str.length - 2);
+  } else {
+    str = dbusStr;
+  }
+  return str;
+}
+
 Future<void> runAction({
   required String actionId,
   required String matchId,
 }) async {
-  final isOpenFolderRequest = (actionId != "") ? true : false;
-  final path = matchId;
+  final isOpenFolderRequest =
+      (dbusToString(actionId) == "openContainingFolder") ? true : false;
+  final path = dbusToString(matchId);
   if (isOpenFolderRequest) {
     openContainingFolder(path);
   } else {
-    openWorkspace(path);
+    final trimmed =
+        path.replaceFirst('file://', '').replaceFirst('vscode-remote://', '');
+    openWorkspace(trimmed);
   }
 }
 
