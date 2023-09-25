@@ -23,7 +23,7 @@ fi
 
 # Make install directories in case they don't yet exist.
 mkdir -p ~/.local/bin
-mkdir -p "$dataHome"/kservices5/krunner/dbusplugins/
+mkdir -p "$dataHome"/krunner/dbusplugins/
 mkdir -p "$dataHome"/dbus-1/services/
 
 serviceFileName=$identifier.service
@@ -37,7 +37,7 @@ executableFullPath=$(readlink -m ~/.local/bin/$name)
 cat $serviceFileName | sed "s|Exec=|Exec=$executableFullPath|" - > $dataHome/dbus-1/services/$serviceFileName
 
 # Install the desktop file for KRunner to see the plugin.
-cp $desktopFileName $dataHome/kservices5/krunner/dbusplugins/$desktopFileName
+cp $desktopFileName $dataHome/krunner/dbusplugins/$desktopFileName
 
 # Close KRunner, it will start again when the hotkey is invoked.
 kquitapp5 krunner
