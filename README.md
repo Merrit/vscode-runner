@@ -25,6 +25,13 @@ https://user-images.githubusercontent.com/9575627/143503598-47a7ca08-644d-4ba8-9
 <br>
 
 
+## Requirements
+
+- sqlite3
+  - Fedora: `sudo dnf install sqlite-devel`
+  - Debian/Ubuntu: `sudo apt install libsqlite3-dev`
+
+
 ## Building
 
 ```bash
