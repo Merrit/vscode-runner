@@ -1,0 +1,52 @@
+# Create a new release
+
+name: Release
+
+on:
+  # Build & deploy for tag events matching v*, i.e. v1.0.0, v20.15.10
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: ci-release-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: "Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+
+
+      - name: Setup build requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install libsqlite3-dev
+
+      - name: Build
+        run: |
+          dart pub get
+          dart compile exe -o package/vscode_runner bin/vscode_runner.dart
+
+      - name: Create artifacts
+        run: |
+          mkdir -p output
+          tar -czvf output/vscode_runner.tar.gz package
+
+      - name: Upload artifacts to workflow
+        uses: actions/upload-artifact@v3
+        with:
+          path: output/*
+  
+      - name: Create Draft Release & Upload artifacts
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: true
+          prerelease: false
+          files: |
+            output/vscode_runner.tar.gz
