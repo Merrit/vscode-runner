@@ -23,8 +23,15 @@ fi
 
 # Remove the executable & plugin files.
 rm ~/.local/bin/$name
-rm $dataHome/krunner/dbusplugins/plasma-runner-$name.desktop
-rm $dataHome/dbus-1/services/$identifier.service
+rm "$dataHome"/krunner/dbusplugins/plasma-runner-$name.desktop
+rm "$dataHome"/dbus-1/services/$identifier.service
+
+# Remove any old version that may be in the depreciated kservices5 directory.
+depreciatedDesktopFile="$dataHome"/kservices5/krunner/dbusplugins/plasma-runner-$name.desktop
+if [[ -f "$depreciatedDesktopFile" ]]
+then
+    rm "$depreciatedDesktopFile"
+fi
 
 # Close KRunner, it will start again when the hotkey is invoked.
 kquitapp5 krunner
