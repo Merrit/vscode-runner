@@ -34,10 +34,10 @@ cp $name ~/.local/bin/$name
 
 # Install the service file, adding the path to the runner's executable $name.
 executableFullPath=$(readlink -m ~/.local/bin/$name)
-cat $serviceFileName | sed "s|Exec=|Exec=$executableFullPath|" - > $dataHome/dbus-1/services/$serviceFileName
+cat $serviceFileName | sed "s|Exec=|Exec=$executableFullPath|" - > "$dataHome"/dbus-1/services/$serviceFileName
 
 # Install the desktop file for KRunner to see the plugin.
-cp $desktopFileName $dataHome/krunner/dbusplugins/$desktopFileName
+cp $desktopFileName "$dataHome"/krunner/dbusplugins/$desktopFileName
 
 # Close KRunner, it will start again when the hotkey is invoked.
 kquitapp5 krunner
