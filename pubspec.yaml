@@ -8,8 +8,9 @@ environment:
 
 dependencies:
   krunner: ^0.2.0
+  logger: ^2.0.2+1
   sqlite3: ^1.5.1
-  xdg_directories: ^1.0.0
+  xdg_directories: ^1.0.3
 
 dev_dependencies:
   lints: ^2.1.1
