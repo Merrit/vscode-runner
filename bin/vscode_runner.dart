@@ -126,7 +126,7 @@ String? parseRelativePath(Uri uri) {
     // path that will fit better in limited space, eg:
     // `~/Development/project` rather than `/home/user/Development/project`.
     final withoutHomePrefix = uri.path.substring(homeDir.length);
-    final relativePath = '~' + withoutHomePrefix;
+    final relativePath = '~$withoutHomePrefix';
     return relativePath;
   } else {
     return null;
@@ -178,7 +178,7 @@ Future<void> openWorkspace(String path) async {
 
   // just pass the raw path as --folder-uri, VSCode will handle it
   // see https://stackoverflow.com/questions/60144074/how-to-open-a-remote-folder-from-command-line-in-vs-code
-  await Process.run('code', ['--folder-uri=' + path]);
+  await Process.run('code', ['--folder-uri=$path']);
 }
 
 Future<void> openContainingFolder(String path) async {
