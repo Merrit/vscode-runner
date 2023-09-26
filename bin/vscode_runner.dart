@@ -31,13 +31,13 @@ Future<void> checkIfAlreadyRunning() async {
   final result = await Process.run('pidof', ['vscode_runner']);
   final hasError = result.stderr != '';
   if (hasError) {
-    log.e('Issue checking for existing process: ${result.stderr}');
+    print('Issue checking for existing process: ${result.stderr}');
     return;
   }
   final output = result.stdout as String;
   final runningInstanceCount = output.trim().split(' ').length;
   if (runningInstanceCount != 1) {
-    log.e('An instance of vscode_runner appears to already be running. '
+    print('An instance of vscode_runner appears to already be running. '
         'Aborting run of new instance.');
     exit(0);
   }
