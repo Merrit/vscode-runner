@@ -7,11 +7,16 @@ A KRunner plugin / "runner" that lists VSCode's recent workspaces
 <br>
 
 
-Available on [store.kde.org](https://store.kde.org/p/1653111/).
+## Download
+
+<a href="https://store.kde.org/p/1653111/"><img alt="Download from the KDE Store" height="50px"
+src="https://img.shields.io/badge/KDE_Store-blue?style=for-the-badge&logo=kde"></a>
 
 
 <br>
 
+
+## Screenshot
 
 ![Screenshot](assets/screenshots/screenshot.png)
 
