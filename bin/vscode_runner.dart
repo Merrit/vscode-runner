@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:krunner/krunner.dart';
 import 'package:vscode_runner/database.dart';
 import 'package:vscode_runner/logs/logging_manager.dart';
-import 'package:xdg_directories/xdg_directories.dart';
 
 Future<void> main(List<String> arguments) async {
   await checkIfAlreadyRunning();
@@ -56,12 +55,9 @@ Future<void> checkVSCodeExePath() async {
   log.i('Found VSCode executable at $path');
 }
 
-final String dbFilePath =
-    '${configHome.path}/Code/User/globalStorage/state.vscdb';
-
 Future<List<QueryMatch>> matchQuery(String query) async {
   log.i('Running query for: $query');
-  final vscodeDatabase = VSCodeDatabase(dbFilePath);
+  final vscodeDatabase = VSCodeDatabase(DatabaseFilePath.vscode);
   final recentWorkspacePaths = vscodeDatabase.getRecentWorkspacePaths();
   recentWorkspacePaths.removeWhere((element) => !element.contains(query));
 

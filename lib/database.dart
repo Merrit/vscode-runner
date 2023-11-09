@@ -1,8 +1,20 @@
 import 'dart:convert';
 
 import 'package:sqlite3/sqlite3.dart';
+import 'package:xdg_directories/xdg_directories.dart';
 
 import 'logs/logging_manager.dart';
+
+/// The paths to the database files that various verions of VSCode use.
+abstract class DatabaseFilePath {
+  /// The stable version of VSCode.
+  static String vscode =
+      '${configHome.path}/Code/User/globalStorage/state.vscdb';
+
+  /// The Insiders version of VSCode.
+  static String vscodeInsiders =
+      '${configHome.path}/Code - Insiders/User/globalStorage/state.vscdb';
+}
 
 /// Represents the database from the `state.vscdb` file that VSCode uses for
 /// configurations.
