@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:krunner/krunner.dart';
-import 'package:sqlite3/sqlite3.dart';
+import 'package:vscode_runner/database.dart';
 import 'package:vscode_runner/logs/logging_manager.dart';
-import 'package:vscode_runner/storage.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
 Future<void> main(List<String> arguments) async {
@@ -57,37 +56,13 @@ Future<void> checkVSCodeExePath() async {
   log.i('Found VSCode executable at $path');
 }
 
-/// Load VSCode's globalStorage database and retrieve recent paths.
-List<String> fetchPaths() {
-  final dbFile = '${configHome.path}/Code/User/globalStorage/state.vscdb';
-  final Database db;
-
-  try {
-    db = sqlite3.open(dbFile, mode: OpenMode.readOnly);
-  } catch (e) {
-    log.e('Unable to open VSCode database file.\n'
-        'Expected file at $dbFile\n'
-        'Make sure sqlite3 is installed.\n'
-        'Error: $e');
-    return const [];
-  }
-
-  log.i('Opened VSCode database file at $dbFile');
-
-  final rows = db.select(
-    "SELECT value FROM ItemTable WHERE key = 'history.recentlyOpenedPathsList'",
-  );
-  db.dispose();
-
-  final jsonString = rows.first.values.first as String;
-  final recentPaths = Storage.fromJson(jsonString).recentPaths;
-
-  return recentPaths;
-}
+final String dbFilePath =
+    '${configHome.path}/Code/User/globalStorage/state.vscdb';
 
 Future<List<QueryMatch>> matchQuery(String query) async {
   log.i('Running query for: $query');
-  final recentWorkspacePaths = fetchPaths();
+  final vscodeDatabase = VSCodeDatabase(dbFilePath);
+  final recentWorkspacePaths = vscodeDatabase.getRecentWorkspacePaths();
   recentWorkspacePaths.removeWhere((element) => !element.contains(query));
 
   final matches = recentWorkspacePaths.map((path) {
