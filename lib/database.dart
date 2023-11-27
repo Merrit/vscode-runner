@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:sqlite3/sqlite3.dart';
 import 'package:xdg_directories/xdg_directories.dart';
@@ -21,7 +23,47 @@ abstract class DatabaseFilePath {
 class VSCodeDatabase {
   final String _dbFilePath;
 
-  const VSCodeDatabase(this._dbFilePath);
+  VSCodeDatabase(this._dbFilePath) {
+    _watchDatabaseFile();
+  }
+
+  /// A stream that emits an event whenever the database file changes.
+  ///
+  /// This is used to detect when VSCode adds a new workspace to its "recent
+  /// workspaces" list.
+  Stream<void> get databaseChangedStream =>
+      _databaseChangedStreamController.stream;
+
+  /// Controller for the [databaseChangedStream].
+  final _databaseChangedStreamController = StreamController<void>.broadcast();
+
+  /// Watch the database file for changes, and emit an event to the
+  /// [databaseChangedStream] whenever it changes.
+  Future<void> _watchDatabaseFile() async {
+    final databaseFile = File(_dbFilePath);
+    final databaseFileExists = await databaseFile.exists();
+
+    if (!databaseFileExists) {
+      log.e('Unable to watch database file. File does not exist.');
+      return;
+    }
+
+    log.i('Watching database file at $_dbFilePath');
+
+    final databaseFileWatcher = databaseFile.watch(events: FileSystemEvent.all);
+    Timer? databaseFileWatcherTimer;
+
+    await for (final event in databaseFileWatcher) {
+      if (event.type == FileSystemEvent.modify) {
+        // If the file is modified multiple times in a short period of time,
+        // we only want to emit one event.
+        databaseFileWatcherTimer?.cancel();
+        databaseFileWatcherTimer = Timer(const Duration(seconds: 30), () {
+          _databaseChangedStreamController.add(null);
+        });
+      }
+    }
+  }
 
   /// Returns a list where each is the path of a workspace that is remembered
   /// by VSCode, in its "recent workspaces" list.
@@ -48,7 +90,7 @@ class VSCodeDatabase {
     final jsonString = rows.first.values.first as String;
     final recentPaths = _recentPathsFromJson(jsonString);
 
-    return recentPaths;
+    return List<String>.unmodifiable([...recentPaths]);
   }
 
   /// Converts the json from the db query into a `List<String>` of paths.
