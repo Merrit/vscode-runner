@@ -7,6 +7,8 @@ on:
   push:
     tags:
       - "v*"
+  # Enable manual run
+  workflow_dispatch:
 
 concurrency:
   group: ci-release-${{ github.ref }}-1
@@ -43,4 +45,4 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            artifacts/*
+            artifacts/artifact/*
