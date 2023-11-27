@@ -13,36 +13,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # call-tests:
+    # uses: ./.github/workflows/tests.yml
+
+  call-build:
+    # needs: call-tests
+    uses: ./.github/workflows/build.yml
+    with:
+      pre-release: false
+    secrets: inherit
+
   release:
     name: "Release"
+    needs: call-build
     runs-on: "ubuntu-latest"
 
     steps:
       - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1
 
-
-      - name: Setup build requirements
-        run: |
-          sudo apt-get update
-          sudo apt-get install libsqlite3-dev
-
-      - name: Build
-        run: |
-          dart pub get
-          dart compile exe -o package/vscode_runner bin/vscode_runner.dart
-
-      - name: Create artifacts
-        run: |
-          mkdir -p output
-          # Compress the contents of the package directory
-          (cd package/ && tar -zcvf ../output/vscode_runner.tar.gz .)
-
-      - name: Upload artifacts to workflow
-        uses: actions/upload-artifact@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
         with:
-          path: output/*
-  
+          path: artifacts
+ 
       - name: Create Draft Release & Upload artifacts
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
@@ -50,4 +43,4 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            output/vscode_runner.tar.gz
+            artifacts/*

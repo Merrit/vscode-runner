@@ -1,0 +1,49 @@
+name: Build
+on:
+  # Enable manual run
+  workflow_dispatch:
+  # Allow being called by other workflows
+  workflow_call:
+    inputs:
+      pre-release:
+        description: "Whether the build is for a pre-release"
+        required: false
+        default: false
+        type: boolean
+
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+
+    # ----------------------------------- Setup ------------------------------ #
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Setup Linux build requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install libsqlite3-dev
+
+      # ----------------------------------- Build ---------------------------- #
+
+      - name: Build
+        run: |
+          dart pub get
+          dart compile exe -o package/vscode_runner bin/vscode_runner.dart
+
+      # ---------------------------------- Upload ---------------------------- #
+
+      - name: Create artifacts
+        run: |
+          mkdir -p output
+          # Compress the contents of the package directory
+          (cd package/ && tar -zcvf ../output/vscode_runner.tar.gz .)
+
+      - name: Upload artifacts to workflow
+        uses: actions/upload-artifact@v3
+        with:
+          path: output/vscode_runner.tar.gz
