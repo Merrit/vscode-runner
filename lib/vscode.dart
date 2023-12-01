@@ -20,3 +20,29 @@ class VSCode {
     });
   }
 }
+
+/// Returns the executable name for the given [version].
+String vscodeExecutableFor(VSCodeVersion version) {
+  switch (version) {
+    case VSCodeVersion.codium:
+      return 'codium';
+    case VSCodeVersion.insiders:
+      return 'code-insiders';
+    case VSCodeVersion.stable:
+      return 'code';
+  }
+}
+
+/// Returns the icon name for the given [version].
+///
+/// This is used to determine which icon will be shown in the search results.
+String vscodeIconNameFor(VSCodeVersion version) {
+  switch (version) {
+    case VSCodeVersion.codium:
+      return 'vscodium';
+    case VSCodeVersion.insiders:
+      return 'com.visualstudio.code.insiders';
+    case VSCodeVersion.stable:
+      return 'com.visualstudio.code';
+  }
+}

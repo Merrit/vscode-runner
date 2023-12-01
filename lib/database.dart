@@ -9,13 +9,17 @@ import 'logs/logging_manager.dart';
 
 /// The paths to the database files that various verions of VSCode use.
 abstract class DatabaseFilePath {
-  /// The stable version of VSCode.
-  static String vscode =
-      '${configHome.path}/Code/User/globalStorage/state.vscdb';
+  /// The VSCodium version of VSCode.
+  static String codium =
+      '${configHome.path}/VSCodium/User/globalStorage/state.vscdb';
 
   /// The Insiders version of VSCode.
-  static String vscodeInsiders =
+  static String insiders =
       '${configHome.path}/Code - Insiders/User/globalStorage/state.vscdb';
+
+  /// The stable version of VSCode.
+  static String stable =
+      '${configHome.path}/Code/User/globalStorage/state.vscdb';
 }
 
 /// Represents the database from the `state.vscdb` file that VSCode uses for
