@@ -17,7 +17,7 @@ Future<void> main(List<String> arguments) async {
   if (vscodeExists) {
     _vscodeInstances.add(VSCode(
       VSCodeVersion.stable,
-      database: VSCodeDatabase(DatabaseFilePath.vscode),
+      database: VSCodeDatabase(DatabaseFilePath.stable),
     ));
   }
 
@@ -25,7 +25,15 @@ Future<void> main(List<String> arguments) async {
   if (vscodeInsidersExists) {
     _vscodeInstances.add(VSCode(
       VSCodeVersion.insiders,
-      database: VSCodeDatabase(DatabaseFilePath.vscodeInsiders),
+      database: VSCodeDatabase(DatabaseFilePath.insiders),
+    ));
+  }
+
+  final bool codiumExists = await _executableExists('codium');
+  if (codiumExists) {
+    _vscodeInstances.add(VSCode(
+      VSCodeVersion.codium,
+      database: VSCodeDatabase(DatabaseFilePath.codium),
     ));
   }
 
@@ -131,7 +139,7 @@ Future<List<QueryMatch>> matchQuery(String query) async {
   for (final instance in _vscodeInstances) {
     final instanceMatches = _getMatchesFor(query, instance.version);
     log.i(
-      'Found ${instanceMatches.length} matches for ${instance.version} VSCode.',
+      'Found ${instanceMatches.length} matches for ${instance.version}.',
     );
     matches.addAll(instanceMatches);
   }
@@ -146,6 +154,7 @@ List<QueryMatch> _getMatchesFor(String query, VSCodeVersion vscodeVersion) {
   final recentWorkspacePaths = List<String>.from(vscode.recentWorkspacePaths);
   final regex = RegExp(query, caseSensitive: false);
   recentWorkspacePaths.removeWhere((element) => !regex.hasMatch(element));
+  if (recentWorkspacePaths.isEmpty) return [];
   final matches = _workspacePathsToQueryMatches(
     recentWorkspacePaths,
     vscodeVersion,
@@ -161,18 +170,25 @@ List<QueryMatch> _workspacePathsToQueryMatches(
   /// which icon to use.
   VSCodeVersion vscodeVersion,
 ) {
-  final icon = vscodeVersion == VSCodeVersion.stable
-      ? 'com.visualstudio.code'
-      : 'com.visualstudio.code.insiders';
+  final icon = vscodeIconNameFor(vscodeVersion);
 
   final matches = recentWorkspacePaths.map((path) {
     final uri = pathToUri(path);
     final relativePath = parseRelativePath(uri);
     final projectName = path.split('/').last;
 
-    final idPrefix = (vscodeVersion == VSCodeVersion.stable) //
-        ? 'stable'
-        : 'insiders';
+    final String idPrefix;
+    switch (vscodeVersion) {
+      case VSCodeVersion.codium:
+        idPrefix = 'codium';
+        break;
+      case VSCodeVersion.insiders:
+        idPrefix = 'insiders';
+        break;
+      case VSCodeVersion.stable:
+        idPrefix = 'stable';
+        break;
+    }
 
     final id = '$idPrefix-$path';
 
@@ -267,9 +283,7 @@ String _dbusToString(String dbusStr) {
 Future<void> openWorkspace(String uri, VSCodeVersion vscodeVersion) async {
   log.i('Opening workspace at $uri with $vscodeVersion');
 
-  final String executable = (vscodeVersion == VSCodeVersion.stable) //
-      ? 'code'
-      : 'code-insiders';
+  final executable = vscodeExecutableFor(vscodeVersion);
 
   /// Pass the raw uri with `--folder-uri` and VSCode will handle it.
   // see https://stackoverflow.com/questions/60144074/how-to-open-a-remote-folder-from-command-line-in-vs-code
