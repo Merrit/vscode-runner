@@ -2,7 +2,7 @@ A KRunner plugin / "runner" that lists VSCode's recent workspaces
 
 - Quickly re-open the workspace in VSCode by pressing `Enter`.
 - Open a file browser to the workspace's directory by pressing `Shift` + `Enter`.
-- Supports: Stable & Insiders
+- Supports: Stable, Insiders, VSCodium
 
 
 <br>
