@@ -41,8 +41,8 @@ String vscodeIconNameFor(VSCodeVersion version) {
     case VSCodeVersion.codium:
       return 'vscodium';
     case VSCodeVersion.insiders:
-      return 'com.visualstudio.code.insiders';
+      return 'vscode-insiders';
     case VSCodeVersion.stable:
-      return 'com.visualstudio.code';
+      return 'vscode';
   }
 }
