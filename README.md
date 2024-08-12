@@ -13,6 +13,12 @@ A KRunner plugin / "runner" that lists VSCode's recent workspaces
 <a href="https://store.kde.org/p/1653111/"><img alt="Download from the KDE Store" height="50px"
 src="https://img.shields.io/badge/KDE_Store-blue?style=for-the-badge&logo=kde"></a>
 
+**NixOS**
+
+```bash
+nix-shell --packages vscode-runner
+```
+
 
 <br>
 
