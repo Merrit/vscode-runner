@@ -247,17 +247,13 @@ Future<void> runAction({
   required String actionId,
   required String matchId,
 }) async {
-  final validatedActionId = _dbusToString(actionId);
-  final validatedMatchId = _dbusToString(matchId);
+  log.i('Running action. actionId: $actionId, matchId: $matchId');
 
-  log.i(
-      'Running action. actionId: $validatedActionId, matchId: $validatedMatchId');
-
-  final matchPrefix = validatedMatchId.split('-').first;
+  final matchPrefix = matchId.split('-').first;
   final vscodeVersion = VSCodeVersion.values.byName(matchPrefix);
-  final path = validatedMatchId.replaceFirst('$matchPrefix-', '');
+  final path = matchId.replaceFirst('$matchPrefix-', '');
 
-  final isOpenFolderRequest = (validatedActionId == "openContainingFolder") //
+  final isOpenFolderRequest = (actionId == "openContainingFolder") //
       ? true
       : false;
 
@@ -266,18 +262,6 @@ Future<void> runAction({
   } else {
     openWorkspace(path, vscodeVersion);
   }
-}
-
-String _dbusToString(String dbusStr) {
-  // Remove the `DBusString('')`
-  String str;
-  if (dbusStr.startsWith("DBusString")) {
-    str = dbusStr.substring(12);
-    str = str.substring(0, str.length - 2);
-  } else {
-    str = dbusStr;
-  }
-  return str;
 }
 
 Future<void> openWorkspace(String uri, VSCodeVersion vscodeVersion) async {
