@@ -7,6 +7,16 @@ import 'package:xdg_directories/xdg_directories.dart';
 
 import 'logs/logging_manager.dart';
 
+class MissingSQLite3Exception implements Exception {
+  @override
+  String toString() {
+    return 'The sqlite3 package is required to read the VSCode database file.\n'
+        'Make sure sqlite3 is installed.\n'
+        '\n'
+        'Details: https://github.com/Merrit/vscode-runner?tab=readme-ov-file#requirements';
+  }
+}
+
 /// The paths to the database files that various verions of VSCode use.
 abstract class DatabaseFilePath {
   /// The VSCodium version of VSCode.
@@ -81,7 +91,8 @@ class VSCodeDatabase {
           'Expected file at $_dbFilePath\n'
           'Make sure sqlite3 is installed.\n'
           'Error: $e');
-      return const [];
+
+      throw MissingSQLite3Exception();
     }
 
     log.i('Opened VSCode database file at $_dbFilePath');

@@ -10,6 +10,7 @@ dependencies:
   krunner: ^1.0.1
   logger: ^2.0.2+1
   sqlite3: ^2.4.6
+  xdg_desktop_portal: ^0.1.13
   xdg_directories: ^1.0.3
 
 dev_dependencies:
