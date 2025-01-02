@@ -1,5 +1,6 @@
 import 'database.dart';
 import 'enums/enums.dart';
+import 'notifications.dart';
 
 class VSCode {
   final VSCodeDatabase _database;
@@ -12,12 +13,25 @@ class VSCode {
     required VSCodeDatabase database,
   }) : _database = database {
     // Populate the recentWorkspacePaths list.
-    recentWorkspacePaths = _database.getRecentWorkspacePaths();
+    _updateRecentWorkspacePaths();
 
     // Listen for changes to the database file, and update the recentWorkspacePaths.
     database.databaseChangedStream.listen((_) {
-      recentWorkspacePaths = _database.getRecentWorkspacePaths();
+      _updateRecentWorkspacePaths();
     });
+  }
+
+  /// Populates the [recentWorkspacePaths] list with the most recent workspace
+  /// paths.
+  Future<void> _updateRecentWorkspacePaths() async {
+    try {
+      recentWorkspacePaths = _database.getRecentWorkspacePaths();
+    } on MissingSQLite3Exception catch (e) {
+      await sendNotification(
+        title: 'SQLite3 Error',
+        body: e.toString(),
+      );
+    }
   }
 }
 
