@@ -20,7 +20,7 @@ jobs:
     # ----------------------------------- Setup ------------------------------ #
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
 
       - name: Setup Linux build requirements
@@ -44,6 +44,6 @@ jobs:
           (cd package/ && tar -zcvf ../output/vscode_runner.tar.gz .)
 
       - name: Upload artifacts to workflow
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: output/vscode_runner.tar.gz
