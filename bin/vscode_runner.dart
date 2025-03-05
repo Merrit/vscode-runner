@@ -83,7 +83,7 @@ Future<bool> _executableExists(String executable) async {
   final hasError = result.stderr != '';
 
   if (hasError) {
-    log.e('Unable to locate code executable: ${result.stderr}');
+    log.d('Unable to locate code executable: ${result.stderr}');
     return false;
   }
 
@@ -271,10 +271,22 @@ Future<void> openWorkspace(String uri, VSCodeVersion vscodeVersion) async {
 
   /// Pass the raw uri with `--folder-uri` and VSCode will handle it.
   // see https://stackoverflow.com/questions/60144074/how-to-open-a-remote-folder-from-command-line-in-vs-code
-  await Process.run(executable, ['--folder-uri=$uri']);
+  final result = await Process.run(executable, ['--folder-uri=$uri']);
+
+  if (result.exitCode != 0) {
+    log.e('Issue opening workspace: ${result.stderr}');
+  } else {
+    log.i('Successfully opened workspace at $uri with $vscodeVersion');
+  }
 }
 
 Future<void> openContainingFolder(String path) async {
   log.i('Opening containing folder at $path');
-  await Process.run('xdg-open', [path]);
+  final result = await Process.run('xdg-open', [path]);
+
+  if (result.exitCode != 0) {
+    log.e('Issue opening containing folder: ${result.stderr}');
+  } else {
+    log.i('Successfully opened containing folder at $path');
+  }
 }
