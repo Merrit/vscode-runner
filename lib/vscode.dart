@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'database.dart';
 import 'enums/enums.dart';
 import 'notifications.dart';
@@ -31,6 +33,8 @@ class VSCode {
         title: 'SQLite3 Error',
         body: e.toString(),
       );
+      
+      exit(1);
     }
   }
 }
