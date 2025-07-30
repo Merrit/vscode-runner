@@ -82,6 +82,13 @@ class VSCodeDatabase {
   /// Returns a list where each is the path of a workspace that is remembered
   /// by VSCode, in its "recent workspaces" list.
   List<String> getRecentWorkspacePaths() {
+    // Ensure that the database file exists before trying to open it.
+    final databaseFile = File(_dbFilePath);
+    if (!databaseFile.existsSync()) {
+      log.i('VSCode database file does not exist at $_dbFilePath');
+      return [];
+    }
+
     final Database db;
 
     try {
