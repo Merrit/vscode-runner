@@ -15,10 +15,19 @@ src="https://img.shields.io/badge/KDE_Store-blue?style=for-the-badge&logo=kde"><
 
 **NixOS**
 
+To open a shell where `vscode_runner` is installed:
 ```bash
 nix-shell --packages vscode-runner
 ```
 
+To permanently install, add this package to your system configuration:
+```nix
+environment.systemPackages = with pkgs; [
+  # …
+  vscode-runner
+];
+```
+Note that you need to restart KRunner to see results from this runner: `pkill krunner`. It will start automatically the next time you use its shortcut.
 
 <br>
 
