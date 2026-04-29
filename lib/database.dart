@@ -109,6 +109,11 @@ class VSCodeDatabase {
     );
     db.dispose();
 
+    if (rows.isEmpty) {
+      log.i('No recent workspaces found in VSCode database.');
+      return [];
+    }
+
     final jsonString = rows.first.values.first as String;
     final recentPaths = _recentPathsFromJson(jsonString);
 
