@@ -26,11 +26,11 @@ rm ~/.local/bin/$name
 rm "$dataHome"/krunner/dbusplugins/plasma-runner-$name.desktop
 rm "$dataHome"/dbus-1/services/$identifier.service
 
-# Remove any old version that may be in the depreciated kservices5 directory.
-depreciatedDesktopFile="$dataHome"/kservices5/krunner/dbusplugins/plasma-runner-$name.desktop
-if [[ -f "$depreciatedDesktopFile" ]]
+# Remove any old version that may be in the deprecated kservices5 directory.
+deprecatedDesktopFile="$dataHome"/kservices5/krunner/dbusplugins/plasma-runner-$name.desktop
+if [[ -f "$deprecatedDesktopFile" ]]
 then
-    rm "$depreciatedDesktopFile"
+    rm "$deprecatedDesktopFile"
 fi
 
 # Close KRunner, it will start again when the hotkey is invoked.
