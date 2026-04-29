@@ -34,4 +34,4 @@ then
 fi
 
 # Close KRunner, it will start again when the hotkey is invoked.
-kquitapp5 krunner
+kquitapp6 krunner

@@ -40,4 +40,4 @@ cat $serviceFileName | sed "s|Exec=|Exec=$executableFullPath|" - > "$dataHome"/d
 cp $desktopFileName "$dataHome"/krunner/dbusplugins/$desktopFileName
 
 # Close KRunner, it will start again when the hotkey is invoked.
-kquitapp5 krunner
+kquitapp6 krunner
