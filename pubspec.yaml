@@ -1,6 +1,6 @@
 name: vscode_runner
 description: KRunner plugin for quickly opening recent VSCode workspaces
-version: 1.8.1
+version: 1.8.2
 publish_to: none
 homepage: https://github.com/Merrit/vscode-runner
 environment:
