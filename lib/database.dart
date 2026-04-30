@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
+import 'enums/vscode_version.dart';
 import 'logs/logging_manager.dart';
 
 class MissingSQLite3Exception implements Exception {
@@ -17,8 +18,12 @@ class MissingSQLite3Exception implements Exception {
   }
 }
 
-/// The paths to the database files that various verions of VSCode use.
+/// The paths to the database files that various versions of VSCode use.
 abstract class DatabaseFilePath {
+  static final String _home = Platform.environment['HOME'] ?? '';
+
+  // Legacy paths (XDG config-based).
+
   /// The VSCodium version of VSCode.
   static String codium =
       '${configHome.path}/VSCodium/User/globalStorage/state.vscdb';
@@ -30,6 +35,42 @@ abstract class DatabaseFilePath {
   /// The stable version of VSCode.
   static String stable =
       '${configHome.path}/Code/User/globalStorage/state.vscdb';
+
+  // New shared-storage paths introduced in later VSCode releases.
+  //
+  // Since VS Code 1.118.0
+  // https://github.com/microsoft/vscode/pull/311317
+
+  /// The Insiders version of VSCode (new shared storage location).
+  static String insidersShared =
+      '$_home/.vscode-insiders-shared/sharedStorage/state.vscdb';
+
+  /// The stable version of VSCode (new shared storage location).
+  static String stableShared =
+      '$_home/.vscode-shared/sharedStorage/state.vscdb';
+
+  /// The VSCodium version of VSCode (new shared storage location).
+  static String codiumShared =
+      '$_home/.vscodium-shared/sharedStorage/state.vscdb';
+
+  /// Returns the database file path for [version], preferring the new shared
+  /// storage location when it exists and falling back to the legacy path for
+  /// backwards compatibility.
+  static String resolve(VSCodeVersion version) {
+    final candidates = switch (version) {
+      VSCodeVersion.insiders => [insidersShared, insiders],
+      VSCodeVersion.stable => [stableShared, stable],
+      VSCodeVersion.codium => [codiumShared, codium],
+    };
+
+    for (final path in candidates) {
+      if (File(path).existsSync()) return path;
+    }
+
+    // Neither path exists yet; return the new location as the default so that
+    // the watcher targets the correct file once VSCode creates it.
+    return candidates.first;
+  }
 }
 
 /// Represents the database from the `state.vscdb` file that VSCode uses for
