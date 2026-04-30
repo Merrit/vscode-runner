@@ -29,6 +29,9 @@ mkdir -p "$dataHome"/dbus-1/services/
 serviceFileName=$identifier.service
 desktopFileName=plasma-runner-$name.desktop
 
+# Stop the runner process if it's already running, so we can replace the files.
+kill "$(pidof $name)" &> /dev/null || true
+
 # Install the runner's executable.
 cp $name ~/.local/bin/$name
 

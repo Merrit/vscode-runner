@@ -8,7 +8,7 @@ identifier=codes.merritt.vscode_runner
 name=vscode_runner
 
 # Stop the runner process.
-kill "$(pidof $name)" &> /dev/null
+kill "$(pidof $name)" &> /dev/null || true
 
 # Ensure our working directory is the scripts directory.
 cd "$(dirname "$0")" || exit
