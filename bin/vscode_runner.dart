@@ -17,7 +17,7 @@ Future<void> main(List<String> arguments) async {
   if (vscodeExists) {
     _vscodeInstances.add(VSCode(
       VSCodeVersion.stable,
-      database: VSCodeDatabase(DatabaseFilePath.stable),
+      database: VSCodeDatabase(DatabaseFilePath.resolve(VSCodeVersion.stable)),
     ));
   }
 
@@ -25,7 +25,8 @@ Future<void> main(List<String> arguments) async {
   if (vscodeInsidersExists) {
     _vscodeInstances.add(VSCode(
       VSCodeVersion.insiders,
-      database: VSCodeDatabase(DatabaseFilePath.insiders),
+      database:
+          VSCodeDatabase(DatabaseFilePath.resolve(VSCodeVersion.insiders)),
     ));
   }
 
@@ -33,7 +34,7 @@ Future<void> main(List<String> arguments) async {
   if (codiumExists) {
     _vscodeInstances.add(VSCode(
       VSCodeVersion.codium,
-      database: VSCodeDatabase(DatabaseFilePath.codium),
+      database: VSCodeDatabase(DatabaseFilePath.resolve(VSCodeVersion.codium)),
     ));
   }
 
