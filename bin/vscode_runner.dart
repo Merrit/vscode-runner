@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:krunner/krunner.dart';
@@ -48,7 +47,7 @@ Future<void> main(List<String> arguments) async {
   final runner = KRunnerPlugin(
     identifier: 'codes.merritt.vscode_runner',
     name: '/vscode_runner',
-    matchQuery: _debouncedMatchQuery,
+    matchQuery: matchQuery,
     retrieveActions: retrieveActions,
     runAction: runAction,
   );
@@ -94,44 +93,10 @@ Future<bool> _executableExists(String executable) async {
   return true;
 }
 
-/// A timer that is used to debounce the query.
-Timer? _debounceTimer;
-
-/// The amount of time to wait before running the query.
-const _debounceTime = Duration(milliseconds: 500);
-
-/// A completer that is used to complete the query.
-///
-/// The Completer is kept outside of the [_debouncedMatchQuery] function so that
-/// we can be sure that a previous query is cancelled before starting a new one.
-Completer<List<QueryMatch>>? _completer;
-
-/// Debounces the query.
-///
-/// If the user is typing, we don't want to run the query for every keystroke or
-/// we will run into performance issues.
-///
-/// Instead, we wait until the user has stopped typing for a short period of
-/// time, and then run the query.
-Future<List<QueryMatch>> _debouncedMatchQuery(String query) async {
-  _debounceTimer?.cancel();
-
-  if (_completer == null || _completer!.isCompleted) {
-    _completer = Completer();
-  }
-
-  _debounceTimer = Timer(_debounceTime, () async {
-    try {
-      final matches = await matchQuery(query);
-      _completer!.complete(matches);
-    } catch (e) {
-      _completer!.completeError(e);
-    }
-  });
-  return _completer!.future;
-}
-
 /// Returns a list of [QueryMatch]es for the given [query].
+///
+/// The matching is done entirely in-memory (regex against a cached list of
+/// workspace paths), so results are returned very quickly.
 Future<List<QueryMatch>> matchQuery(String query) async {
   log.i('Running query for: $query');
 
@@ -217,16 +182,18 @@ Uri pathToUri(String path) {
   return uri;
 }
 
+/// The user's home directory.
+final String _homeDir = Platform.environment['HOME'] ??
+    ((Process.runSync('xdg-user-dir', []).stdout as String).trim());
+
 String? parseRelativePath(Uri uri) {
-  var homeDir = Process.runSync('xdg-user-dir', []).stdout as String;
-  homeDir = homeDir.trim();
-  final pathIsUnderHome = uri.path.contains(homeDir);
+  final pathIsUnderHome = uri.path.contains(_homeDir);
   if (pathIsUnderHome) {
     // If the path is under the user's home directory, we return
     // the relative path so that the subtitle in KRunner can be a shorter
     // path that will fit better in limited space, eg:
     // `~/Development/project` rather than `/home/user/Development/project`.
-    final withoutHomePrefix = uri.path.substring(homeDir.length);
+    final withoutHomePrefix = uri.path.substring(_homeDir.length);
     final relativePath = '~$withoutHomePrefix';
     return relativePath;
   } else {
