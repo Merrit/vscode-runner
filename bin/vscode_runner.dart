@@ -140,7 +140,7 @@ List<QueryMatch> _workspacePathsToQueryMatches(
 
   final matches = recentWorkspacePaths.map((path) {
     final uri = pathToUri(path);
-    final relativePath = parseRelativePath(uri);
+    final subtitle = parseSubtitle(uri);
     final projectName = path.split('/').last;
 
     final String idPrefix;
@@ -166,7 +166,7 @@ List<QueryMatch> _workspacePathsToQueryMatches(
       icon: icon,
       rating: QueryMatchRating.exact,
       relevance: 1.0,
-      properties: QueryMatchProperties(subtitle: relativePath ?? uri.path),
+      properties: QueryMatchProperties(subtitle: subtitle ?? uri.path),
     );
   }).toList();
 
@@ -186,7 +186,15 @@ Uri pathToUri(String path) {
 final String _homeDir = Platform.environment['HOME'] ??
     ((Process.runSync('xdg-user-dir', []).stdout as String).trim());
 
-String? parseRelativePath(Uri uri) {
+/// Returns the given [uri] as a more human-readable subtitle for display in
+/// KRunner results.
+String? parseSubtitle(Uri uri) {
+  if (uri.path.contains('ssh-remote%252B')) {
+    // If the path is an SSH URI, we return the path with the ssh-remote%252B
+    // prefix replaced with ssh:// so that it is more human-readable as a subtitle.
+    return uri.path.replaceFirst('ssh-remote%252B', 'ssh://');
+  }
+
   final pathIsUnderHome = uri.path.contains(_homeDir);
   if (pathIsUnderHome) {
     // If the path is under the user's home directory, we return
