@@ -50,8 +50,16 @@ abstract class DatabaseFilePath {
       '$_home/.vscode-shared/sharedStorage/state.vscdb';
 
   /// The VSCodium version of VSCode (new shared storage location).
+  ///
+  /// The folder name is not derived from the product name; it comes from the
+  /// `sharedDataFolderName` key in `product.json`, which is independent of
+  /// `dataFolderName`. VSCodium rebrands `dataFolderName` and
+  /// `serverDataFolderName` but leaves `sharedDataFolderName` at the
+  /// Code - OSS default, so its shared storage lives in `.vscode-oss-shared`.
+  ///
+  /// https://github.com/microsoft/vscode/blob/849be60ee89e414165969291f77d98e6fcd6e3cf/product.json#L6
   static String codiumShared =
-      '$_home/.vscodium-shared/sharedStorage/state.vscdb';
+      '$_home/.vscode-oss-shared/sharedStorage/state.vscdb';
 
   /// Returns the database file path for [version], preferring the new shared
   /// storage location when it exists and falling back to the legacy path for
